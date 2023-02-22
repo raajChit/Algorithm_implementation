@@ -29,7 +29,7 @@ public class MainClass {
             Node<T> next = head.next;
             // Find the correct position to insert the current element in the sorted list
             if (sortedHead == null || head.data.compareTo(sortedHead.data) < 0) {
-                if(sortedHead != null && head.data.compareTo(sortedHead.data) < 0){
+                if (sortedHead != null && head.data.compareTo(sortedHead.data) < 0) {
                     noOfComparisions++;
                 }
                 head.next = sortedHead;
@@ -40,7 +40,7 @@ public class MainClass {
                     noOfComparisions++;
                     current = current.next;
                 }
-                if(!(current.next != null && head.data.compareTo(current.next.data) >= 0)){
+                if (!(current.next != null && head.data.compareTo(current.next.data) >= 0)) {
                     noOfComparisions++;
                 }
                 head.next = current.next;
@@ -101,77 +101,51 @@ public class MainClass {
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    public static <T extends Comparable<T>> Node<T> partition(Node<T> head, Node<T> tail) {
+        if (head == tail || head == null || tail == null) {
+            return head;
+        }
+
+        Node<T> prev = head;
+        Node<T> curr = head;
+        T pivot = tail.data;
+
+        while (head != tail) {
+            noOfComparisions++;
+            if (head.data.compareTo(pivot) < 0) {
+                prev = curr;
+                T temp = curr.data;
+                curr.data = head.data;
+                head.data = temp;
+                curr = curr.next;
+            }
+            head = head.next;
+        }
+
+        T temp = curr.data;
+        curr.data = pivot;
+        tail.data = temp;
+
+        return prev;
+    }
+
     public static <T extends Comparable<T>> Node<T> quickSort(Node<T> head, Node<T> tail) {
-        if (head == null || head == tail) {
-            return head;
+        if (head == null || head == tail || head == tail.next) {
+            return null;
         }
-        
-        Node<T> pivot = partition(head, tail);
-        Node<T> left = quickSort(head, pivot);
-        Node<T> right = quickSort(pivot.next, tail);
-    
-        if (left == null) {
-            head.next = right;
-            return pivot;
+
+        Node<T> prev = partition(head, tail);
+        quickSort(head, prev);
+
+        if (prev != null && prev == head) {
+            quickSort(prev.next, tail);
+        } else if (prev != null && prev.next != null) {
+            quickSort(prev.next.next, tail);
         }
-    
-        Node<T> leftTail = left;
-        while (leftTail.next != null) {
-            leftTail = leftTail.next;
-        }
-        leftTail.next = pivot;
-        pivot.next = right;
-    
-        return left;
+
+        return head;
     }
-    
-    private static <T extends Comparable<T>> Node<T> partition(Node<T> head, Node<T> tail) {
-        if (head == null || tail == null || head == tail) {
-            return head;
-        }
-    
-        Node<T> first = head;
-        Node<T> last = tail;
-        Node<T> middle = head;
-        for (int i = 0; middle != tail && middle.next != tail; i++) {
-            middle = middle.next;
-            if (i % 2 == 1) {
-                first = first.next;
-            }
-        }
-    
-        if (first.data.compareTo(middle.data) > 0) {
-            swap(first, middle);
-        }
-        if (first.data.compareTo(last.data) > 0) {
-            swap(first, last);
-        }
-        if (middle.data.compareTo(last.data) > 0) {
-            swap(middle, last);
-        }
-    
-        Node<T> pivot = middle;
-        Node<T> i = head;
-        Node<T> j = head;
-    
-        while (j != null && j != tail) {
-            if (j.data.compareTo(pivot.data) < 0) {
-                i = i.next;
-                swap(i, j);
-            }
-            j = j.next;
-        }
-    
-        swap(head, i);
-        return i;
-    }
-    
-    private static <T extends Comparable<T>> void swap(Node<T> a, Node<T> b) {
-        T temp = a.data;
-        a.data = b.data;
-        b.data = temp;
-    }
-    
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Helper method to print the elements of a linked list
@@ -197,37 +171,37 @@ public class MainClass {
 
         }
 
-        if(Integer.parseInt(args[0]) == 0){
+        if (Integer.parseInt(args[0]) == 0) {
             System.out.print("Input List for insertion sort: ");
             printList(head);
             timer2.start();
             Node<Integer> sortedHead = insertionSort(head);
             timer2.stop();
-            System.err.print(timer2.toString()+"\n");
-            System.err.print("comparisons\t"+noOfComparisions+"\n");
+            System.err.print(timer2.toString() + "\n");
+            System.err.print("comparisons\t" + noOfComparisions + "\n");
             System.out.print("Sorted List for insertion sort: ");
             printList(sortedHead);
-        }else if(Integer.parseInt(args[0]) == 1){
+        } else if (Integer.parseInt(args[0]) == 1) {
             System.out.print("Input List for merge sort: ");
             printList(head);
             timer2.start();
             Node<Integer> sortedHead = mergeSort(head);
             timer2.stop();
-            System.err.print(timer2.toString()+"\n");
-            System.err.print("comparisons\t"+noOfComparisions+"\n");
+            System.err.print(timer2.toString() + "\n");
+            System.err.print("comparisons\t" + noOfComparisions + "\n");
             System.out.print("Sorted List for merge sort: ");
             printList(sortedHead);
-        }else if(Integer.parseInt(args[0]) == 2){
+        } else if (Integer.parseInt(args[0]) == 2) {
             System.out.print("Input List for quick sort: ");
             printList(head);
             timer2.start();
             Node<Integer> sortedHead = quickSort(head, tail);
             timer2.stop();
-            System.err.print(timer2.toString()+"\n");
-            System.err.print("comparisons\t"+noOfComparisions+"\n");
+            System.err.print(timer2.toString() + "\n");
+            System.err.print("comparisons\t" + noOfComparisions + "\n");
             System.out.print("Sorted List for quick sort: ");
             printList(sortedHead);
-        }else{
+        } else {
             System.out.print("Invalid Sorting Selected.\n0 -> Insertion Sort\n1 -> Merge Sort\n2 -> Quick Sort\n");
         }
     }
