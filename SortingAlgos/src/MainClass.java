@@ -103,38 +103,64 @@ public class MainClass {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static <T extends Comparable<T>> Node<T> partition(Node<T> head, Node<T> tail) {
+        // Check for base cases
         if (head == tail || head == null || tail == null) {
             return head;
         }
+        // Get the middle node of the linked list
+        Node<T> middle = getMiddleNode(head, tail);
+        // Find the median value among the first, middle, and last nodes
+        Node<T> pivotNode = findMedian(head, middle, tail);
+        T pivot = pivotNode.data;
 
+        // Swap the pivot node with the tail node
+        swap(pivotNode, tail);
+
+        // Partition the linked list into two parts: nodes smaller than pivot, and nodes
+        // greater than pivot
         Node<T> prev = head;
         Node<T> curr = head;
-        T pivot = tail.data;
 
         while (head != tail) {
             noOfComparisions++;
+            // Compare the data of each node to the pivot value
             if (head.data.compareTo(pivot) < 0) {
+                // If the node is smaller than the pivot, swap it with the current node
                 prev = curr;
-                T temp = curr.data;
-                curr.data = head.data;
-                head.data = temp;
+                swap(curr, head);
                 curr = curr.next;
             }
+            // Move to the next node
             head = head.next;
         }
-
+        // Swap the pivot node back to its correct position
         T temp = curr.data;
         curr.data = pivot;
         tail.data = temp;
 
+        // Return the previous node (the last node in the smaller partition)
         return prev;
     }
 
+    private static <T> void swap(Node<T> node1, Node<T> node2) {
+        // Check for null nodes
+        if (node1 == null || node2 == null) {
+            throw new IllegalArgumentException("Cannot swap null nodes");
+        }
+
+        // Swap the data of the two nodes
+        T temp = node1.data;
+        node1.data = node2.data;
+        node2.data = temp;
+    }
+
     public static <T extends Comparable<T>> Node<T> quickSort(Node<T> head, Node<T> tail) {
+        // Check for base cases
         if (head == null || head == tail || head == tail.next) {
             return null;
         }
 
+        // Partition the linked list and recursively sort the two partitions
         Node<T> prev = partition(head, tail);
         quickSort(head, prev);
 
@@ -144,7 +170,55 @@ public class MainClass {
             quickSort(prev.next.next, tail);
         }
 
+        // Return the head of the sorted linked list
         return head;
+    }
+
+    private static <T extends Comparable<T>> Node<T> getMiddleNode(Node<T> head, Node<T> tail) {
+        // Check for base case
+        if (head == tail) {
+            return head;
+        }
+
+        // Use two pointers to find the middle node
+        Node<T> slow = head;
+        Node<T> fast = head.next;
+
+        while (fast != tail && fast.next != tail) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // Return the middle node
+        return slow;
+    }
+
+    private static <T extends Comparable<T>> Node<T> findMedian(Node<T> head, Node<T> middle, Node<T> tail) {
+        // Get the data of the first, middle, and last nodes
+        T a = head.data;
+        T b = middle.data;
+        T c = tail.data;
+
+        // Determine which of the three nodes has the median value
+        if (a.compareTo(b) <= 0 && a.compareTo(c) <= 0) {
+            if (b.compareTo(c) <= 0) {
+                return middle;
+            } else {
+                return tail;
+            }
+        } else if (b.compareTo(a) <= 0 && b.compareTo(c) <= 0) {
+            if (a.compareTo(c) <= 0) {
+                return head;
+            } else {
+                return tail;
+            }
+        } else {
+            if (a.compareTo(b) <= 0) {
+                return head;
+            } else {
+                return middle;
+            }
+        }
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
