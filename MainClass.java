@@ -1,6 +1,6 @@
-// import java.io.File;
-// import java.io.FileNotFoundException;
-// import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class MainClass {
     // Node class to represent a node in the linked list
@@ -14,7 +14,7 @@ public class MainClass {
         }
     }
 
-    public static int noOfComparisions = 0;
+    public static long noOfComparisions;
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Insertion sort method that takes a linked list as input and returns the
@@ -56,78 +56,57 @@ public class MainClass {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static <T extends Comparable<T>> Node<T> mergeSort(Node<T> head) {
+        // Base case: If the linked list is empty or has only one node, return it.
         if (head == null || head.next == null) {
             return head;
         }
-    
-        int length = getListLength(head);
-        Node<T> dummy = new Node<>(null);
-        dummy.next = head;
-    
-        for (int width = 1; width < length; width *= 2) {
-            Node<T> prev = dummy;
-            Node<T> curr = dummy.next;
-    
-            while (curr != null) {
-                Node<T> left = curr;
-                Node<T> right = split(left, width);
-                curr = split(right, width);
-                prev = merge(prev, left, right);
-            }
-        }
-    
-        return dummy.next;
+        
+        // Find the middle node of the linked list.
+        Node<T> middle = getMiddle(head);
+        // Recursively sort the left and right halves of the linked list.
+        Node<T> right = mergeSort(middle.next);
+        middle.next = null; // Break the linked list into two halves.
+        Node<T> left = mergeSort(head);
+        // Merge the sorted left and right halves of the linked list.
+        return merge(left, right);
     }
     
-    private static <T extends Comparable<T>> Node<T> split(Node<T> head, int width) {
+    // Helper method to find the middle node of the linked list.
+    private static <T extends Comparable<T>> Node<T> getMiddle(Node<T> head) {
         if (head == null) {
             return null;
         }
-    
-        for (int i = 1; i < width && head.next != null; i++) {
-            head = head.next;
+        Node<T> slow = head;
+        Node<T> fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
         }
-    
-        Node<T> right = head.next;
-        head.next = null;
-        return right;
+        return slow;
     }
     
-    private static <T extends Comparable<T>> Node<T> merge(Node<T> prev, Node<T> left, Node<T> right) {
-        Node<T> curr = prev;
-    
+    // Helper method to merge two sorted linked lists.
+    private static <T extends Comparable<T>> Node<T> merge(Node<T> left, Node<T> right) {
+        Node<T> dummy = new Node<T>(null);
+        Node<T> current = dummy;
         while (left != null && right != null) {
-            if (left.data.compareTo(right.data) <= 0) {
-                curr.next = left;
+            if (left.data.compareTo(right.data) < 0) {
+                current.next = left;
                 left = left.next;
             } else {
-                curr.next = right;
+                current.next = right;
                 right = right.next;
             }
             noOfComparisions++;
-            curr = curr.next;
+            current = current.next;
         }
-    
-        curr.next = (left != null) ? left : right;
-        return getLast(curr);
-    }
-    
-    private static <T extends Comparable<T>> Node<T> getLast(Node<T> node) {
-        while (node != null && node.next != null) {
-            node = node.next;
+        if (left != null) {
+            current.next = left;
+        } else {
+            current.next = right;
         }
-        return node;
+        return dummy.next;
     }
-    
-    private static <T extends Comparable<T>> int getListLength(Node<T> head) {
-        int length = 0;
-        while (head != null) {
-            length++;
-            head = head.next;
-        }
-        return length;
-    }
-
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     public static <T extends Comparable<T>> Node<T> partition(Node<T> head, Node<T> tail) {
@@ -263,38 +242,39 @@ public class MainClass {
 
         Timer timer2 = new Timer("runtime");
         
-        // int flag = 0;
-        // Node<Integer> head = new Node<>(0);
-        // Node<Integer> tail = new Node<>(0);
-        // try {
-        //     File myObj = new File(args[1]);
-        //     Scanner myReader = new Scanner(myObj);
+        int flag = 0;
+        noOfComparisions = 0;
+        Node<Integer> head = new Node<>(0);
+        Node<Integer> tail = new Node<>(0);
+        try {
+            File myObj = new File(args[1]);
+            Scanner myReader = new Scanner(myObj);
 
-        //     while (myReader.hasNextLine()) {
-        //         String data = myReader.nextLine();
-        //         if( flag == 0 ){
-        //             head.data = Integer.parseInt(data);
-        //             tail = head;
-        //             flag++;
-        //         } else {
-        //             tail.next = new Node<>(Integer.parseInt(data));
-        //             tail = tail.next;
-        //         }
-        //     }
-        //     myReader.close();
-        // } catch (FileNotFoundException e) {
-        //     System.out.println("An error occurred.");
-        //     e.printStackTrace();
-        // }
-
-        Node<Integer> head = new Node<>(Integer.parseInt(args[1]));
-        Node<Integer> tail = head;
-
-        for (int i = 2; i < args.length; i++) {
-            tail.next = new Node<>(Integer.parseInt(args[i]));
-            tail = tail.next;
-
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                if( flag == 0 ){
+                    head.data = Integer.parseInt(data);
+                    tail = head;
+                    flag++;
+                } else {
+                    tail.next = new Node<>(Integer.parseInt(data));
+                    tail = tail.next;
+                }
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
+
+        // Node<Integer> head = new Node<>(Integer.parseInt(args[1]));
+        // Node<Integer> tail = head;
+
+        // for (int i = 2; i < args.length; i++) {
+        //     tail.next = new Node<>(Integer.parseInt(args[i]));
+        //     tail = tail.next;
+
+        // }
 
         if (Integer.parseInt(args[0]) == 0) {
             System.out.print("Input List for insertion sort: ");
@@ -302,30 +282,30 @@ public class MainClass {
             timer2.start();
             Node<Integer> sortedHead = insertionSort(head);
             timer2.stop();
+            System.out.print("Sorted List for insertion sort: ");
+            printList(sortedHead);
             System.err.print(timer2.toString() + "\n");
             System.err.print("comparisons\t" + noOfComparisions + "\n");
-            System.out.print("Sorted List for insertion sort: ");
-            //printList(sortedHead);
         } else if (Integer.parseInt(args[0]) == 1) {
             System.out.print("Input List for merge sort: ");
             //printList(head);
             timer2.start();
             Node<Integer> sortedHead = mergeSort(head);
             timer2.stop();
+            System.out.print("Sorted List for merge sort: ");
+            printList(sortedHead);
             System.err.print(timer2.toString() + "\n");
             System.err.print("comparisons\t" + noOfComparisions + "\n");
-            System.out.print("Sorted List for merge sort: ");
-            //printList(sortedHead);
         } else if (Integer.parseInt(args[0]) == 2) {
-            System.out.print("Input List for quick sort: ");
+            System.out.print("Quick sort: ");
             //printList(head);
             timer2.start();
             Node<Integer> sortedHead = quickSort(head, tail);
             timer2.stop();
+            System.out.print("Sorted List for quick sort: ");
+            printList(sortedHead);
             System.err.print(timer2.toString() + "\n");
             System.err.print("comparisons\t" + noOfComparisions + "\n");
-            System.out.print("Sorted List for quick sort: ");
-            //printList(sortedHead);
         } else {
             System.out.print("Invalid Sorting Selected.\n0 -> Insertion Sort\n1 -> Merge Sort\n2 -> Quick Sort\n");
         }
