@@ -277,7 +277,7 @@ public class MainClass {
         // }
 
         if (Integer.parseInt(args[0]) == 0) {
-            System.out.print("Input List for insertion sort: ");
+            System.out.print("Insertion sort:\n");
             //printList(head);
             timer2.start();
             Node<Integer> sortedHead = insertionSort(head);
@@ -292,7 +292,7 @@ public class MainClass {
             timer2.start();
             Node<Integer> sortedHead = mergeSort(head);
             timer2.stop();
-            System.out.print("Sorted List for merge sort: ");
+            System.out.print("Merge sort:\n");
             printList(sortedHead);
             System.err.print(timer2.toString() + "\n");
             System.err.print("comparisons\t" + noOfComparisions + "\n");
@@ -302,7 +302,7 @@ public class MainClass {
             timer2.start();
             Node<Integer> sortedHead = quickSort(head, tail);
             timer2.stop();
-            System.out.print("Sorted List for quick sort: ");
+            System.out.print("Quick sort:\n");
             printList(sortedHead);
             System.err.print(timer2.toString() + "\n");
             System.err.print("comparisons\t" + noOfComparisions + "\n");
