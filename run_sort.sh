@@ -16,10 +16,13 @@ fi
 
 # run the java program with the input data as arguments depending on the selected sorting algorithm
 if [ "$1" == "insertion" ]; then
+  javac MainClass.java
   java MainClass 0 $2
 elif [ "$1" == "merge" ]; then
+  javac MainClass.java
   java MainClass 1 $2
 elif [ "$1" == "quick" ]; then
+  javac MainClass.java
   java MainClass 2 $2
 else
   echo "Error: Invalid sorting algorithm (insertion/merge/quick)"
